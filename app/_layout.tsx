@@ -40,6 +40,18 @@ export default function RootLayout() {
           name="api-error"
           options={{ title: 'API', headerTitle: 'Handling API Errors' }}
         />
+        <Tabs.Screen
+          name="console-log"
+          options={{ title: 'Console', headerTitle: 'Console Logging' }}
+        />
+        <Tabs.Screen
+          name="devtools"
+          options={{ title: 'DevTools', headerTitle: 'React Native DevTools' }}
+        />
+        <Tabs.Screen
+          name="debug-tools"
+          options={{ title: 'Debug', headerTitle: 'Chrome & VS Code' }}
+        />
       </Tabs>
       <StatusBar style="dark" />
     </>
