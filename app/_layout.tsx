@@ -1,3 +1,4 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
@@ -31,26 +32,65 @@ export default function RootLayout() {
           },
         }}>
         <Tabs.Screen name="index" options={{ href: null }} />
-        <Tabs.Screen name="try-catch" options={{ title: 'Try-Catch', headerTitle: 'Try-Catch Demo' }} />
+        <Tabs.Screen
+          name="try-catch"
+          options={{
+            title: 'Try-Catch',
+            headerTitle: 'Try-Catch Demo',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="shield-checkmark-outline" size={size} color={color} />
+            ),
+          }}
+        />
         <Tabs.Screen
           name="component-error"
-          options={{ title: 'Component', headerTitle: 'Component Error' }}
+          options={{
+            title: 'Component',
+            headerTitle: 'Component Error',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="cube-outline" size={size} color={color} />
+            ),
+          }}
         />
         <Tabs.Screen
           name="api-error"
-          options={{ title: 'API', headerTitle: 'Handling API Errors' }}
+          options={{
+            title: 'API',
+            headerTitle: 'Handling API Errors',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="cloud-offline-outline" size={size} color={color} />
+            ),
+          }}
         />
         <Tabs.Screen
           name="console-log"
-          options={{ title: 'Console', headerTitle: 'Console Logging' }}
+          options={{
+            title: 'Console',
+            headerTitle: 'Console Logging',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="terminal-outline" size={size} color={color} />
+            ),
+          }}
         />
         <Tabs.Screen
           name="devtools"
-          options={{ title: 'DevTools', headerTitle: 'React Native DevTools' }}
+          options={{
+            title: 'DevTools',
+            headerTitle: 'React Native DevTools',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="construct-outline" size={size} color={color} />
+            ),
+          }}
         />
         <Tabs.Screen
           name="debug-tools"
-          options={{ title: 'Debug', headerTitle: 'Chrome & VS Code' }}
+          options={{
+            title: 'Debug',
+            headerTitle: 'Chrome & VS Code',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="bug-outline" size={size} color={color} />
+            ),
+          }}
         />
       </Tabs>
       <StatusBar style="dark" />

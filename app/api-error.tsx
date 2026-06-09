@@ -18,7 +18,6 @@ function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Lỗi không xác định';
 }
 
-// 1. Promise-based — dùng .catch() trong promise chain
 function fetchWithPromise(url: string): Promise<DemoResult> {
   return fetch(url)
     .then((response) => {
@@ -39,7 +38,6 @@ function fetchWithPromise(url: string): Promise<DemoResult> {
     }));
 }
 
-// 2. Async/await — bọc await trong try-catch
 async function fetchWithAsyncAwait(url: string): Promise<DemoResult> {
   try {
     const response = await fetch(url);
@@ -61,7 +59,6 @@ async function fetchWithAsyncAwait(url: string): Promise<DemoResult> {
   }
 }
 
-// 3. Network status — kiểm tra kết nối trước khi gọi API
 async function checkNetworkStatus(): Promise<DemoResult> {
   try {
     const state = await NetInfo.fetch();
@@ -83,51 +80,37 @@ async function checkNetworkStatus(): Promise<DemoResult> {
   }
 }
 
-function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-// 4. Retry + exponential backoff — thử lại khi lỗi tạm thời
-let unstableCallCount = 0;
-
-async function simulateUnstableApi() {
-  unstableCallCount += 1;
-  if (unstableCallCount < 3) {
-    throw new Error(`Lỗi tạm thời (lần ${unstableCallCount})`);
-  }
-  return { status: 'ok' };
-}
 
 async function fetchWithRetry(maxRetries = 3): Promise<DemoResult> {
-  unstableCallCount = 0;
+  let lastError: unknown;
 
-  try {
-    for (let attempt = 0; attempt < maxRetries; attempt += 1) {
-      try {
-        await simulateUnstableApi();
-        return {
-          label: 'Retry',
-          success: true,
-          message: `Thành công sau ${attempt + 1} lần thử`,
-        };
-      } catch (error) {
-        const isLastAttempt = attempt === maxRetries - 1;
-        if (isLastAttempt) {
-          throw error;
-        }
-        const delayMs = 2 ** attempt * 400;
-        await wait(delayMs);
+  for (let attempt = 0; attempt < maxRetries; attempt += 1) {
+    try {
+      const response = await fetch(API_OK);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
-    }
+      const data = await response.json();
+      return {
+        label: 'Retry',
+        success: true,
+        message: `Thành công sau ${attempt + 1}/${maxRetries} lần thử: ${data.name}`,
+      };
+    } catch (error) {
+      lastError = error;
+      const isLastAttempt = attempt === maxRetries - 1;
+      if (isLastAttempt) {
+        break;
+      }
 
-    throw new Error('Không thể hoàn thành request');
-  } catch (error) {
-    return {
-      label: 'Retry',
-      success: false,
-      message: `Thất bại: ${getErrorMessage(error)}`,
-    };
+    }
   }
+
+  return {
+    label: 'Retry',
+    success: false,
+    message: `Thất bại sau ${maxRetries} lần thử: ${getErrorMessage(lastError)}`,
+  };
 }
 
 export default function ApiErrorScreen() {
@@ -201,7 +184,9 @@ export default function ApiErrorScreen() {
       <SectionCard step={4} title="Retry + backoff">
         <View style={styles.group}>
           <ActionButton title="Gọi API không ổn định" onPress={() => run(fetchWithRetry)} />
-          <Text style={styles.hint}>Demo giả lập: fail 2 lần, thành công lần 3.</Text>
+          <Text style={styles.hint}>
+            Tối đa 3 lần
+          </Text>
         </View>
       </SectionCard>
 
